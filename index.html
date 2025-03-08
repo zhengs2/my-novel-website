@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>老用户小说搜索</title>
+    <style>
+        /* 居中简约风格 */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 80%;
+            max-width: 600px;
+            margin-top: 50px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button {
+            background: #1890ff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        #searchSection, #novelList {
+            display: none; /* 初始隐藏 */
+        }
+        .novel-item {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #1890ff;
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 卡密验证区 -->
+        <div id="authSection">
+            <input type="text" id="keyInput" placeholder="请输入找文卡密（王东瑞是个嘚）">
+            <button onclick="verifyKey()">解锁搜索</button>
+            <p id="hint" style="color:red; text-align:center;"></p>
+        </div>
+
+        <!-- 搜索区 -->
+        <div id="searchSection">
+            <input type="text" id="searchInput" placeholder="输入小说关键词（如：王东瑞是个嘚！）">
+            <button onclick="searchNovels()">立即搜索</button>
+            <div id="novelList"></div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟小说数据（可自行修改）
+        const novels = [
+            {
+                title: "雪中悍刀行",
+                keywords: "武侠 玄幻 热血",
+                url: "https://www.zhihu.com/question/123456"
+            },
+            {
+                title: "诡秘之主",
+                keywords: "克苏鲁 蒸汽朋克 奇幻",
+                url: "https://www.zhihu.com/question/654321"
+            }
+        ];
+
+        // 卡密验证函数
+        function verifyKey() {
+            const inputKey = document.getElementById("keyInput").value.trim();
+            const hint = document.getElementById("hint");
+            
+            if (inputKey === "王东瑞是个嘚") {
+                document.getElementById("authSection").style.display = "none";
+                document.getElementById("searchSection").style.display = "block";
+                hint.textContent = "";
+            } else {
+                hint.textContent = "❌ 卡密错误，您可以通过以下链接免费获取卡密";
+            }
+        }
+
+        // 小说搜索函数
+        function searchNovels() {
+            const keyword = document.getElementById("searchInput").value.toLowerCase();
+            const list = document.getElementById("novelList");
+            list.innerHTML = "";
+
+            const results = novels.filter(novel => 
+                novel.title.toLowerCase().includes(keyword) || 
+                novel.keywords.includes(keyword)
+            );
+
+            if (results.length === 0) {
+                list.innerHTML = "<p>未找到相关小说，请尝试其他关键词</p>";
+                return;
+            }
+
+            results.forEach(novel => {
+                list.innerHTML += `
+                    <div class="novel-item">
+                        <h3>${novel.title}</h3>
+                        <p>关键词：${novel.keywords}</p>
+                        <a href="${novel.url}" target="_blank">点击阅读</a>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
