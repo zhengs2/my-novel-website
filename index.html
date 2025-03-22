@@ -1,128 +1,315 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>老用户小说搜索</title>
-    <style>
-        /* 居中简约风格 */
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            background: #f0f2f5;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 80%;
-            max-width: 600px;
-            margin-top: 50px;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        button {
-            background: #1890ff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-        }
-        #searchSection, #novelList {
-            display: none; /* 初始隐藏 */
-        }
-        .novel-item {
-            margin: 15px 0;
-            padding: 15px;
-            border-left: 4px solid #1890ff;
-            background: #f8f9fa;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>短剧大全</title>
+  <style>
+    /* 基础样式 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+      color: #333;
+      background-color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* 头部样式 */
+    header {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 0;
+    }
+    
+    h1 {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: normal;
+    }
+    
+    /* 主要内容区域 */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      width: 100%;
+    }
+    
+    /* 说明区域 */
+    .instructions {
+      background-color: #e0f7ff;
+      padding: 1rem;
+      border-radius: 0.375rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .highlight-link {
+      display: block;
+      background: linear-gradient(to right, #f87171, #fbbf24, #34d399);
+      padding: 0.75rem;
+      border-radius: 0.375rem;
+      margin-bottom: 0.75rem;
+      text-align: center;
+      position: relative;
+      text-decoration: none;
+      color: #000;
+      transition: opacity 0.2s;
+    }
+    
+    .highlight-link span {
+      font-weight: 700; /* 加粗 */
+      font-size: 1.1rem; /* 增大字体 */
+      text-shadow: 0px 0px 2px rgba(255, 255, 255, 0.7); /* 添加文字阴影增加可见度 */
+    }
+    
+    .highlight-link:hover {
+      opacity: 0.9;
+    }
+    
+    ol {
+      padding-left: 1.5rem;
+      font-size: 0.875rem;
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+      font-weight: 600; /* 加粗说明文字 */
+    }
+    
+    /* 表单样式 */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .label-hint {
+      color: #6b7280;
+      margin-left: 0.5rem;
+      font-size: 0.875rem;
+    }
+    
+    input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      font-size: 1rem;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    
+    .button-container {
+      display: flex;
+      justify-content: flex-end;
+    }
+    
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+    }
+    
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    
+    /* 结果区域 */
+    .results-container {
+      margin-top: 1.5rem;
+    }
+    
+    .results-box {
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      background-color: #f9fafb;
+      height: 16rem; /* 减小高度 */
+      padding: 1rem;
+      overflow: auto;
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-left-color: #2563eb;
+      border-radius: 50%;
+      width: 2rem;
+      height: 2rem;
+      animation: spin 1s linear infinite;
+      margin-right: 0.5rem;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    .error {
+      color: #ef4444;
+    }
+    
+    a {
+      color: #2563eb;
+      text-decoration: none;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+
+    h3 {
+      font-weight: 500;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 卡密验证区 -->
-        <div id="authSection">
-            <input type="text" id="keyInput" placeholder="请输入找文卡密（王东瑞是个嘚）">
-            <button onclick="verifyKey()">解锁搜索</button>
-            <p id="hint" style="color:red; text-align:center;"></p>
-        </div>
+  <!-- 头部 -->
+  <header>
+    <h1>短剧大全</h1>
+  </header>
 
-        <!-- 搜索区 -->
-        <div id="searchSection">
-            <input type="text" id="searchInput" placeholder="输入小说关键词（如：王东瑞是个嘚！）">
-            <button onclick="searchNovels()">立即搜索</button>
-            <div id="novelList"></div>
-        </div>
+  <main>
+    <!-- 使用说明 -->
+    <div class="instructions">
+      <h2 style="margin-bottom: 0.5rem; font-weight: 600;">使用说明：</h2>
+
+      <!-- 高亮链接 -->
+      <a href="https://www.kdocs.cn/l/cdwG1JtZ5JZm" target="_blank" rel="noopener noreferrer" class="highlight-link">
+        <span>👉 点击这里免费领取密钥 👈</span>
+      </a>
+
+      <ol>
+        <li> 由于短剧大全和快手极速版联合合作， 请先获取密钥，输入密钥后，万部短剧即可随意查询。</li>
+        <li> 上方有密钥的获取方式（是免费的）。 输入密钥后，再输入你想查询的短剧名字，即可查看短剧大全。</li>
+        <li> 多多店铺为无人值守， 有问题请联系QQ客服：3xxxxxxxxxx</li>
+      </ol>
     </div>
 
-    <script>
-        // 模拟小说数据（可自行修改）
-        const novels = [
-            {
-                title: "雪中悍刀行",
-                keywords: "武侠 玄幻 热血",
-                url: "https://www.zhihu.com/question/123456"
-            },
-            {
-                title: "诡秘之主",
-                keywords: "克苏鲁 蒸汽朋克 奇幻",
-                url: "https://www.zhihu.com/question/654321"
-            }
-        ];
+    <!-- 搜索表单 -->
+    <div>
+      <div class="form-group">
+        <label for="password">密钥:</label>
+        <input id="password" type="text" placeholder="这里输入密钥">
+      </div>
 
-        // 卡密验证函数
-        function verifyKey() {
-            const inputKey = document.getElementById("keyInput").value.trim();
-            const hint = document.getElementById("hint");
-            
-            if (inputKey === "王东瑞是个嘚") {
-                document.getElementById("authSection").style.display = "none";
-                document.getElementById("searchSection").style.display = "block";
-                hint.textContent = "";
-            } else {
-                hint.textContent = "❌ 卡密错误，您可以通过以下链接免费获取卡密";
-            }
-        }
+      <div class="form-group">
+        <div style="display: flex; align-items: center;">
+          <label for="search">找短剧：</label>
+          <span class="label-hint">（请记得输入上方密钥）</span>
+        </div>
+        <input id="search" type="text" placeholder="输入短剧名称">
+      </div>
 
-        // 小说搜索函数
-        function searchNovels() {
-            const keyword = document.getElementById("searchInput").value.toLowerCase();
-            const list = document.getElementById("novelList");
-            list.innerHTML = "";
+      <div class="button-container">
+        <button id="search-button">查询</button>
+      </div>
+    </div>
 
-            const results = novels.filter(novel => 
-                novel.title.toLowerCase().includes(keyword) || 
-                novel.keywords.includes(keyword)
-            );
+    <!-- 结果 -->
+    <div class="results-container">
+      <div style="margin-bottom: 0.5rem;">
+        <h3>查询结果：</h3>
+      </div>
 
-            if (results.length === 0) {
-                list.innerHTML = "<p>未找到相关小说，请尝试其他关键词</p>";
-                return;
-            }
+      <div class="results-box" id="results">
+        <!-- 结果将在这里显示 -->
+      </div>
+    </div>
+  </main>
 
-            results.forEach(novel => {
-                list.innerHTML += `
-                    <div class="novel-item">
-                        <h3>${novel.title}</h3>
-                        <p>关键词：${novel.keywords}</p>
-                        <a href="${novel.url}" target="_blank">点击阅读</a>
-                    </div>
-                `;
-            });
-        }
-    </script>
+  <script>
+    // 获取DOM元素
+    const passwordInput = document.getElementById('password');
+    const searchInput = document.getElementById('search');
+    const searchButton = document.getElementById('search-button');
+    const resultsContainer = document.getElementById('results');
+
+    // 正确的密码
+    const correctPassword = "欢迎老朋友回来";
+    const REDIRECT_URL = "https://www.kdocs.cn/l/cby2QSihdSFm?R=L1MvODI=";
+
+    // 添加回车键搜索功能
+    searchInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        handleSearch();
+      }
+    });
+
+    // 点击搜索按钮
+    searchButton.addEventListener('click', handleSearch);
+
+    // 搜索处理函数
+    function handleSearch() {
+      const password = passwordInput.value;
+      const searchQuery = searchInput.value;
+
+      // 检查密码
+      if (password !== correctPassword) {
+        resultsContainer.innerHTML = '<div class="error">查询出错，查询口令错误，请点击上方链接查看正确的口令。</div>';
+        return;
+      }
+
+      // 检查搜索词
+      if (!searchQuery.trim()) {
+        resultsContainer.innerHTML = '<div>请输入要查询的短剧名称。</div>';
+        return;
+      }
+
+      // 显示加载状态
+      resultsContainer.innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <span>正在查询短剧资源...</span>
+        </div>
+      `;
+
+      // 禁用搜索按钮
+      searchButton.disabled = true;
+      
+      // 模拟API调用
+      setTimeout(() => {
+        // 恢复搜索按钮
+        searchButton.disabled = false;
+        
+        // 显示结果
+        resultsContainer.innerHTML = `资料库已查询到短剧 《${searchQuery}》，已授权，请打开此网页，进入观看：<a href="${REDIRECT_URL}" target="_blank" rel="noopener noreferrer">${REDIRECT_URL}</a>`;
+      }, 1000); // 1秒延迟模拟加载
+    }
+  </script>
 </body>
 </html>
